@@ -1,0 +1,125 @@
+<html>
+	<head>
+		<meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+		<script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+		<script language="javascript">
+			function base64ArrayBuffer(arrayBuffer)
+			{
+				var base64    = ''
+				var encodings = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/'
+				console.log(typeof(arrayBuffer));
+				var bytes         = new Uint8Array(arrayBuffer)
+				var byteLength    = bytes.byteLength
+				var byteRemainder = byteLength % 3
+				var mainLength    = byteLength - byteRemainder
+			  
+				var a, b, c, d
+				var chunk
+			  
+				// Main loop deals with bytes in chunks of 3
+				for (var i = 0; i < mainLength; i = i + 3)
+				{
+					// Combine the three bytes into a single integer
+					chunk = (bytes[i] << 16) | (bytes[i + 1] << 8) | bytes[i + 2]
+					// Use bitmasks to extract 6-bit segments from the triplet
+					a = (chunk & 16515072) >> 18 // 16515072 = (2^6 - 1) << 18
+					b = (chunk & 258048)   >> 12 // 258048   = (2^6 - 1) << 12
+					c = (chunk & 4032)     >>  6 // 4032     = (2^6 - 1) << 6
+					d = chunk & 63               // 63       = 2^6 - 1
+					// Convert the raw binary segments to the appropriate ASCII encoding
+					base64 += encodings[a] + encodings[b] + encodings[c] + encodings[d]
+				}
+				// Deal with the remaining bytes and padding
+				if (byteRemainder == 1)
+				{
+					chunk = bytes[mainLength]
+					a = (chunk & 252) >> 2 // 252 = (2^6 - 1) << 2
+					// Set the 4 least significant bits to zero
+					b = (chunk & 3)   << 4 // 3   = 2^2 - 1
+					base64 += encodings[a] + encodings[b] + '=='
+				}
+				else if (byteRemainder == 2)
+				{
+					chunk = (bytes[mainLength] << 8) | bytes[mainLength + 1]
+					a = (chunk & 64512) >> 10 // 64512 = (2^6 - 1) << 10
+					b = (chunk & 1008)  >>  4 // 1008  = (2^6 - 1) << 4
+					// Set the 2 least significant bits to zero
+					c = (chunk & 15)    <<  2 // 15    = 2^4 - 1
+					base64 += encodings[a] + encodings[b] + encodings[c] + '='
+				}
+				return base64
+			}
+
+			function	getCookie(cname)
+			{
+				var name = cname + "=";
+				var decodedCookie = decodeURIComponent(document.cookie);
+				var	ca = decodedCookie.split(';');
+
+				for(var i = 0; i <ca.length; i++)
+				{
+					var c = ca[i];
+					while (c.charAt(0) == ' ')
+					{
+						c = c.substring(1);
+					}
+					if (c.indexOf(name) == 0)
+					{
+						return c.substring(name.length, c.length);
+					}
+				}
+				return "";
+			}
+
+			$(document).ready(function()
+			{
+
+/*
+				var sessionKey = getCookie("cskey");
+				var body = {"height":300,"chartType":"bar","dataSeriesColors":["4F81BD","C0504D","9BBB59","8064A2","4BACC6","F79646"],"title":"Les principales ressources du développement international","labelColors":[""],"labels":["Les ressources"],"dataSeriesNames":["Offre de l'entreprise","Les moyens de production ","Les moyens logistiques","RH","Finances","Informatique"],"valueDisplayType":"none","dataSeriesValues":[[4],[4],[3],[3],[4],[2]],"width":550,"options":{"seriesLayout":"grouped"},"maxValue":4};
+
+//				$.ajaxSetup({ headers:{ 'Content-Type': "application/json" } });
+//				xhr.setRequestHeader("Content-type", "application/json");
+//	x-www-form-urlencoded
+				var xhr = new XMLHttpRequest();
+				xhr.open("POST", "http://icci.cci.fr/var/ezwebin_site/storage/images/content/view/full/20869/774661-2-fre-FR/Beenov-1er-prix-au-salon-CCI-PRO.png");
+//				xhr.open("POST", "http://www.beenov.fr/core/v1/chart?session-key=" + getCookie("cskey"));
+				xhr.setRequestHeader("Content-Type", "application/json");
+				xhr.responseType = 'arraybuffer';
+				xhr.onload = function(e)
+				{
+					$("#image").attr("src", "data:image/png;base64," + base64ArrayBuffer(e.currentTarget.response));
+				};
+				xhr.send(JSON.stringify(body));*/
+
+					$("#image").attr("src", "http://icci.cci.fr/var/ezwebin_site/storage/images/content/view/full/20869/774661-2-fre-FR/Beenov-1er-prix-au-salon-CCI-PRO.png");
+
+				/*
+				$.ajax(
+				{
+					type: "GET",
+					url: "/askpng",
+					dataType: "text",
+					xhrFields:{responseType:"arraybuffer"},
+					success : (function(data)
+					{
+						console.log(typeof(body));
+						console.log(data);
+						$("#image").attr("src", "data:image/png;base64," + base64ArrayBuffer(data));
+
+					}),
+					error : (function(data)
+					{
+						console.log(data);
+						$("#image").attr("src", "data:image/png;base64," + base64ArrayBuffer(data));
+					}),
+				});*/
+					  
+			});
+		</script>
+	</head>
+	<body>
+		<img id="image" width="550" height="300"/>
+	</body>
+</html>
+
