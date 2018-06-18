@@ -134,6 +134,7 @@ var     info_entreprise = function (req, res, base_url)
 var fiches_conseil = function(req, res, base_url)
 {
     let url = create_get_url(base_url, "/advice-info-sheets", {'session-key': req.cookies.cskey});
+    console.log("le lien pou récuperer les fiches conseil"+url);
     request.get(url, function(err, response, body)
 		{
 		    let json = JSON.parse(body);
@@ -177,7 +178,7 @@ var get_quest = function(protocol_version, base_url, res, cskey, data)
 {
     let url = create_get_url(base_url, "/" + data.quest, {'session-key': cskey});
     console.log("le lien pour récupérer les Questions du questionnaire:: " + url);
-    
+
 
     request.get(url, function(err, response, body)
 		{
@@ -223,6 +224,7 @@ var     send_questionnaire_reply = function(req, res, base_url)
 var aide_domains = function(req, res, base_url)
 {
     let url = create_get_url(base_url, '/semaphore/get-valid-domains', {'session-key' : req.cookies.cskey});
+    console.log("le lien pour récuperer le domaine=project dans la page aide"+url);
 
     request.get(url, function(comp_err, comp_res, comp_body)
 		{
@@ -234,7 +236,7 @@ var aide_domains = function(req, res, base_url)
 var aide_means = function(req, res, base_url)
 {
     let url = create_get_url(base_url, '/semaphore/get-valid-means', {'session-key' : req.cookies.cskey});
-
+  console.log("le lien pour récuperer le moyen d'intervention dans la page aide "+url);
     request.get(url, function(comp_err, comp_res, comp_body)
 		{
 		    res.send(comp_body);
@@ -245,6 +247,7 @@ var aide_means = function(req, res, base_url)
 var aide_industries = function(req, res, base_url)
 {
     let url = create_get_url(base_url, '/semaphore/get-valid-industries', {'session-key' : req.cookies.cskey});
+    console.log("le lien pour récuperer le filiére de marché dans la page aide "+url);
 
     request.get(url, function(comp_err, comp_res, comp_body)
 		{
@@ -257,6 +260,7 @@ var helpsheet = function(protocol_version, base_url, res, cskey, data)
 {
     let json = {"ape-code" : data.ape, "city-insee-zip" : data.insee, "department" : data.dept, "domain-id" : data.domain, "industry-id" : data.industry, "means-id" : data.means, "session-key" : cskey};
     let url = create_get_url(base_url, '/semaphore/search-info-sheets', json);
+    console.log("le lien pour recupérer les fiches d'aide selon les données saisis par user "+url);
 
     request.post(
 	{

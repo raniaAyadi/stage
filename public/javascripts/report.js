@@ -1,6 +1,6 @@
-function	compte_rendu(data)//data contient les données recupérées de la base reporttemplate
-{
-    if (data.resources.length >= 1)
+function	compte_rendu(data)//data contient les données recupérées de la base reporttemplate report_temp=temp
+{ //on fait appele dans questionnare-client.js dés que la page questionnaire.html sera chargé
+    if (data.resources.length >= 1) //tant que il ya des template pour ce questionnaire
     {
 	let i = 0;
 	let toAppend = "";
@@ -9,9 +9,9 @@ function	compte_rendu(data)//data contient les données recupérées de la base 
 	while (data.resources[i])
 	{
 	    toAppend += '<option onclick="generate_sumup(report_temp)">' + data.resources[i].name + '</option>';
-	    ++i;//losque on click sur un type de rapport il faut l'afficher 
+	    ++i;//losque on click sur un type de rapport il faut l'afficher
 	}
-	$('#rendu_type').append(toAppend);
+	$('#rendu_type').append(toAppend); //file déroulante
     }
     else
     {
@@ -574,14 +574,15 @@ function	section_header2(index)
 	toAppend += '<button type="button" onclick="hideshow(' + index + ')" id="hide_' + index + '">Afficher</button></div><hr>';
     $("#listrendu").append(toAppend);
 }
-
+ //pour génere le compte rendu de type par exemple rapport1
 function	generate_sumup(data)
-{
+{ //lors de la click sur le boutton 
     let comment = {};
     get_rules("quest");
     global_rules(main_rules);
-    comment = get_comments();
+    comment = get_comments(); //la fonction est définie dans global rules.js
     $('#listrendu > *').remove();
+    //report contient les données de la base /report
     if (report != null && report.status == "ok" && report.resources[0] != undefined)
     {
 	existingreport(comment);

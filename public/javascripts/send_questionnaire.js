@@ -1,5 +1,6 @@
 var is_new_entreprise = false;
 
+//pour l'affichage
 function	Set_plugins()
 {
     $('.wysiwyg').trumbowyg({
@@ -30,6 +31,7 @@ function	Set_plugins()
     check_mandatories();
 }
 
+//retourne la date d'aujord'hui
 function	getCurrentDate()
 {
     let today = new Date();
@@ -48,7 +50,8 @@ function	getCurrentDate()
     return(dd + '/' + mm + '/' + yyyy);
 }
 
-function        getParameterByName(name, url)
+
+function  getParameterByName(name, url)
 {
     if (!url) url = window.location.href;
     name = name.replace(/[\[\]]/g, "\\$&");
@@ -57,7 +60,7 @@ function        getParameterByName(name, url)
     if (!results) return null;
     if (!results[2]) return '';
     return decodeURIComponent(results[2].replace(/\+/g, " "));
-} 
+}
 
 function getCookie(cname) {
     var name = cname + "=";
@@ -79,14 +82,17 @@ function getCookie(cname) {
 var nb_send = 0;
 var validatedP = false;
 
-function	send_questionnaire(reinit)
+
+//pour l'enregistremnet dans la base de données 
+function	send_questionnaire(reinit) //on fait appele lorsque on click sur le button "réinitialiser le rapport"
+//et lorsque on click sur le boutton enregistrer de la questionnaire
 {
     let posted;
-    let url = '/send_questionnaire';
+    let url = '/send_questionnaire'; //pour enregistrer les réponses
     console.log(questionnaire_data);
     globalVariables = {};
     get_rules("quest");
-    global_rules(main_rules);
+    global_rules(main_rules); //les régles global de chaque questionnaire
     console.log("GET COMMENTS");
     console.log(get_comments());
 
@@ -108,7 +114,7 @@ function	send_questionnaire(reinit)
 	};
 	console.log(posted);
     }
-    else if (getParameterByName("newquest", window.location.href) == "true") 
+    else if (getParameterByName("newquest", window.location.href) == "true")
     {
 	posted = {
 	    globalVariableValues: globalVariables,
@@ -149,14 +155,14 @@ function	send_questionnaire(reinit)
 	url += '?company=false';
     if (is_new_entreprise == true)
     {
-	url += "&newent=true&siret=" + getParameterByName("siret", window.location.href); 
+	url += "&newent=true&siret=" + getParameterByName("siret", window.location.href);
     }
     url += '&newquest=' + getParameterByName("newquest", window.location.href);
     if (getParameterByName("newquest", window.location.href) == "true")
     {
 	url += "&nbsend=" + nb_send;
     }
-    console.log(url);
+    console.log( "url of send_questionnaire== "+ url);
     $.ajax({
 	type: 'POST',
 	url: url,

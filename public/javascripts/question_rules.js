@@ -56,8 +56,9 @@ function	list_value(type, length, id)
     }
     return (list);
 }
-
-function	text_rules(text) //on récupére les régles de question
+//on récupére les régles de question de type text
+ // on traite les régles des questions pour qu'on ajoute une valeur dans la variableglobal
+function	text_rules(text) //text contient un tableau des questions de type text
 {
     let i;
     let j;
@@ -72,10 +73,14 @@ function	text_rules(text) //on récupére les régles de question
 		{
 		    value = (text[i].rules[j].expression[2] == "$answer" ?
 			     $('#' + text[i].id).val() : text[i].rules[j].expression[2]);
+
 		    if (value.length != 0)
 			globalVariables[text[i].rules[j].expression[1]] = value;
 		}
-		else if (text[i].rules[j].expression[0] == "if" && ( (text[i].rules[j].expression[1][1] == "$answer" ? $('#' + text[i].id).val() : text[i].rules[j].expression[1][1])
+
+    //  $('#' + text[i].id).val() contient la réponse de la question d'id = text[i].id
+		else if (text[i].rules[j].expression[0] == "if" && ( (text[i].rules[j].expression[1][1] == "$answer" ?
+                                    $('#' + text[i].id).val() : text[i].rules[j].expression[1][1])
 								     == text[i].rules[j].expression[1][2]))
 		{
 		    if (text[i].rules[j].expression[2][0] == "set")
@@ -85,10 +90,12 @@ function	text_rules(text) //on récupére les régles de question
 			if (value.length != 0)
 			    globalVariables[text[i].rules[j].expression[2][1]] = value;
 		    }
+
 		    else if (text[i].rules[j].expression[2][0] == "append")
 		    {
 			if (Array.isArray(globalVariables[text[i].rules[j].expression[2][1]]) == false)
 			    globalVariables[text[i].rules[j].expression[2][1]] = [];
+
 			value = text[i].rules[j].expression[2][2] == "$answer" ?
 			    $('#' + text[i].id).val() : text[i].rules[j].expression[2][2];
 			if (value.length != 0)
@@ -98,6 +105,7 @@ function	text_rules(text) //on récupére les régles de question
 		else if (text[i].rules[j].expression[0] == "append")
 		{
 		    if (Array.isArray(globalVariables[text[i].rules[j].expression[1]]) == false)
+        // si n'est pas un tableau
 			globalVariables[text[i].rules[j].expression[1]] = [];
 		    value = text[i].rules[j].expression[2] == "$answer" ?
 			$('#' + text[i].id).val() : text[i].rules[j].expression[2];
@@ -354,7 +362,7 @@ function	n1Choice_rules(n1Choice)
 }
 
 //les régles de l'affichage
-function	get_rules(type) //type soit les questions du questionnaire ou de la fiche entreprise
+function	get_rules(type) //type = soit les questions du questionnaire ou de la fiche entreprise
 {
     let data;
     if (type == "quest")

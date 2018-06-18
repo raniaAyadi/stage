@@ -11,7 +11,7 @@ var	quest_action;
 var	questionnaire_reply;
 var	questionnaire_id;
 var	company_questionnaire_ids = {'questionnaire' : null,
-				     'questionnaire-reply': null}
+				     									'questionnaire-reply': null}
 var	globalVariables = {};
 var	report_temp;
 var	main_rules;
@@ -22,11 +22,11 @@ var infocomp;
 
 var div_sumup = 0;
 
-if (getParameterByName("newquest", window.location.href) == "true")
-//Get Query string from url with javascript
+if (getParameterByName("newquest", window.location.href) == "true")//Get Query string from url with javascript
     {
 	newrep = 0;
     }
+
 
 /* Permet de naviguer entre les différents onglets de la page questionnaire */
 function	changeOnglet(numero)
@@ -35,7 +35,7 @@ function	changeOnglet(numero)
     // Cache tout les onglets
     for (var i = 0; i < nombreOnglets; ++i)
     {
-	document.getElementById("onglet" + i).style.display = "none";
+		document.getElementById("onglet" + i).style.display = "none";
     }
     // Affiche le sélectionné et le surligne seul en orange
     document.getElementById("onglet" + numero).style.display = "block";
@@ -43,7 +43,7 @@ function	changeOnglet(numero)
     document.getElementsByTagName("span")[1 + numero].setAttribute("id", "selected");
 }
 
-/* Affiche touts les fiches conseil */
+/* Affiche toutes les fiches conseil */
 /* Les valeurs i+1 sont données aux fiches pour éviter d'avoir des 0 lors de l'ajout au panier (NULL) */
 function	loadcons(data, target)
 {
@@ -59,6 +59,7 @@ function	loadcons(data, target)
     $(target).append(toAppend);
 }
 
+//affichage le contenu de fiches conseils qui on click dans questionnaire.html
 function	printcons(index)
 {
     let i = 0;
@@ -87,7 +88,7 @@ function	loadprod(data, target)
 {
     let i = 0;
     let toAppend = [];
-    while (data.resources[i])
+    while (data.resources[i]) //pou l'affichage de toutes les fiche de production à gauche
     {
 	toAppend += '<div class="row"><div class="col-md-12">';
 	toAppend += '<p class="navbar"><span id="prod' + (i + 1) + '" onclick="printprod(' + (i + 1) + ')">';
@@ -97,7 +98,7 @@ function	loadprod(data, target)
     $(target).append(toAppend);
 }
 
-function	printprod(index)
+function	printprod(index) //pour l'affichage de contenus de chaque fiche de production(à droite)
 {
     let i = 0;
     let toAppend = "";
@@ -118,6 +119,7 @@ function	printprod(index)
     }
 }
 
+//pour les fiches d'aide
 function	loadhelp(info)
 {
     let i = 0;
@@ -134,6 +136,7 @@ function	loadhelp(info)
     $('#helpsheet').append(toAppend);
 }
 
+//a voir la requete onehelp !!!!!
 function	printhelp(id1, id2, index)
 {
     let id = id1 + '-' + id2;
@@ -170,9 +173,9 @@ function	printhelp(id1, id2, index)
 	});
 }
 
-/* Récupère les questions du questionnaire */
+/* Récupère les questions du questionnaire ,, fait appel au fonctions pour recupérer les reponses*/
 function	getquest(data)
-{ console.log("blaaaaaaaaaaaaaaaaaaaaaaaaaaaa "+data.quest);
+{
     $.ajax(
 	{
 	    type: "POST",
@@ -182,6 +185,9 @@ function	getquest(data)
 		       {
 			   questionnaire_id = info.id;
 			   main_rules = info.rules; //les conditions de l'affichage des questions dans le compte rendu.
+				 //main_rules contient toute les regles ne sont pas les meme avec les les rules de chaque question
+				 console.log("main_rules=info.id"+info.id );
+				 console.log("main_rules=info.rules"+info.rules );
 			   $('#cmpn').append(data.company);
 			   $('#theme').val(data.theme);
 			   $('#advisor').val(data.advisor);
@@ -194,7 +200,9 @@ function	getquest(data)
 		     }),
 	});
 }
-//affichage des questions et des réponses
+
+
+//affichage des questions et des réponses en fait appel à append_question dans question_handling.js
 function  parse_questionnaire(data, answers, target)
 {
     let toAppend = [];
@@ -213,15 +221,17 @@ function  parse_questionnaire(data, answers, target)
 	while (data.sections[nbrsection].questions[j] != undefined) //tant que il ya des questions dans la section
 	{
 	    toAppend = toAppend.concat(append_question(data.sections[nbrsection].questions[j], answers, "quest"));
-	    ++j;
+			// append_question retourne un tables qui contient mes questions et les réponses
+		  ++j;
 	}
 	toAppend.push('</div>');
 	++nbrsection;
     }
     toAppend = toAppend.join("")
-    $(target).append(toAppend);
+    $(target).append(toAppend); //on va les afficher dans la page questionnaire.html
     switchsection(0);
 }
+
 
 /* Affiche les reponses correspendantes aux questions du questionnaire rangées par sections */
 function    showquest(data) //data contient les Questions (qui on a recupérer depuis la base de données )
@@ -247,6 +257,9 @@ function    showquest(data) //data contient les Questions (qui on a recupérer d
 		    reponses = questionnaire_reply.resources[0].questionAnswers;
 		    quest_action = questionnaire_reply.resources[0].sectionActions;
 		    globalVariables = questionnaire_reply.resources[0].globalVariableValues;
+				console.log("le sglobal variables values = " + questionnaire_reply.resources[0].globalVariableValues);
+				console.log("le sglobal variables values leur variable= " + globalVariables);
+				//contient le variables global qui sont dans la questionnaure-reply
 		    infocomp = {
 			"Workforce": questionnaire_reply.resources[0].companyWorkforce,
 			"Industry": questionnaire_reply.resources[0].companyIndustry,
@@ -309,7 +322,9 @@ function	printsect(info)
     $("#section").append(toAppend); //ajout des sections
 }
 
-/* Ajout au panier des fiches conseil */
+// à voir !!!!!
+
+/* Ajout au panier des fiches conseil (lorsque on click sur ajouter au panier)*/
 /* ATTENTION les indices stockés sont 1 trop grands. Sans cela l'indice 0 bloque la chaine (NULL) */
 function	dunkcons(index)
 {
@@ -335,6 +350,7 @@ function	dunkcons(index)
     }
 }
 
+// * Ajout au panier des fiches produits */
 function	dunkprod(index)
 {
     let i = 0;
@@ -359,6 +375,7 @@ function	dunkprod(index)
     }
 }
 
+// * Ajout au panier des fiches d'aide */
 function	dunkhelp(id, index)
 {
     let i = 0;
@@ -383,13 +400,15 @@ function	dunkhelp(id, index)
     }
 }
 
+//afficher à gauche les tittre de fiches sélectionnées avec un checkbox
+
 /* print the needed sheets in the compte rendu */
 function	update_cptrd_cons(data)
 {
     let toAppend = "";
     let i = 0;
 
-    while (i < arrCons.length)
+    while (i < arrCons.length) //arrcon contient les fiches de conseils qui sont sélectionnée (ajouter au panier)
     {
 	toAppend += '<br /><div class="delimit sheet"><input type="checkbox" value="' + (arrCons[i] - 1) + '">';
 	toAppend += data.resources[arrCons[i] - 1].title + '</div>';
@@ -399,6 +418,7 @@ function	update_cptrd_cons(data)
     $('#selectedcons').append(toAppend);
 }
 
+/* print the needed sheets in the compte rendu */
 function	update_cptrd_prod(data)
 {
     let toAppend = "";
@@ -414,6 +434,7 @@ function	update_cptrd_prod(data)
     $('#selectedprod').append(toAppend);
 }
 
+/* print the needed sheets in the compte rendu */
 function	update_cptrd_help(data)
 {
     let toAppend = "";
@@ -438,7 +459,8 @@ function	update_cptrd_help(data)
     $('#selectedhelp').append(toAppend);
 }
 
-function	fillfield(target, data)
+//remplir la liste déroulante avec les données de base de la page de fiche d'aide on html
+function	fillfield(target, data) //target = id du page html
 {
     let toAppend = "";
     let i = 0;
@@ -451,7 +473,8 @@ function	fillfield(target, data)
     $(target).append(toAppend);
 }
 
-function	needhalp()
+//chercher la fiche d'aide en fonction des paramétres saisies par utilisateur
+function	needhalp() //la fonction est appelé lors de click de boutton rechercher dans la fiche aide
 {
     let ape = $('#naf').val();
 
@@ -486,6 +509,8 @@ function	needhalp()
 	});
 }
 
+//à voir  !!!!!
+//fonction appelé pour faire mise à jour de la fiche entreprise dans la page questionnaire.html
 function modifycomp()
 {
 
@@ -536,6 +561,7 @@ function modifycomp()
 	    sectionActions: [],
 	    validatedP: false,
 	    questionAnswers: get_values("company"),
+			//il prend les valeurs (les reponses de l'utlisateur sur le questionnaire pour les enregistrer dans la base)
 	    comments: [],
 	    date: getCurrentDate(),
 	    owner: { resource: "users/" + getCookie("uid") }
@@ -600,6 +626,7 @@ function modifycomp()
     });
 }
 
+//sera exécuter lors de la chargement de page html
 $(document).ready(function()
 		  {
 		      $("#inputfile").change(function()
@@ -670,7 +697,7 @@ $(document).ready(function()
 				       }),
 			  });
 
-		      /* Fiche aide: selection projet */
+		      /* Fiche aide: sélection projet */
 		      $.ajax(
 			  {
 			      type: "GET",
@@ -678,7 +705,7 @@ $(document).ready(function()
 			      dataType: "json",
 			      success : (function(data)
 					 {
-					     fillfield("#projet", data);
+					     fillfield("#projet", data); //la fontion est définie sur ce script
 					 }),
 			      error : (function(data)
 				       {
@@ -686,7 +713,7 @@ $(document).ready(function()
 				       }),
 			  });
 
-		      /* Fiche aide: selection projet */
+		      /* Fiche aide: moyen d'intervention */
 		      $.ajax(
 			  {
 			      type: "GET",
@@ -718,7 +745,8 @@ $(document).ready(function()
 				       }),
 			  });
 
-		      /* Recuperation du materiel de compte rendu */
+
+		      /* Recuperation du materiel de compte rendu report template*/
 		      $.ajax(
 			  {
 			      type: "GET",
@@ -727,7 +755,7 @@ $(document).ready(function()
 			      success : (function(data)
 					 {
 					     report_temp = data;
-					     compte_rendu(data);
+					     compte_rendu(data); //la fonction définie dans le report.js
 					 }),
 			      error : (function(data)
 				       {
@@ -736,6 +764,7 @@ $(document).ready(function()
 				       }),
 			  });
 
+    			//recupération de la base raport (les reponses)
 		      if (getParameterByName("newquest", window.location.href) == "false")
 		      {
 			  $.ajax(
@@ -745,7 +774,7 @@ $(document).ready(function()
 				  dataType: "json",
 				  success : (function(data)
 					     {
-						 report = data;
+						 report = data; //récupérer la base de rapport qui contient la réfrence sur les questions
 					     }),
 				  error : (function(data)
 					   {
@@ -753,6 +782,9 @@ $(document).ready(function()
 					   }),
 			      });
 		      }
+
+
+
 
 		      /* Récupère les infos nécéssaires à l'affichage de la page dans les cookies */
 		      let data = "";
@@ -782,7 +814,7 @@ $(document).ready(function()
 					    if (typeof advice !== 'undefined')
 					    {
 						$('#selectedcons > *').remove();
-						update_cptrd_cons(advice);
+						update_cptrd_cons(advice); //ajouter fiches de conseil dans le compte rendu
 						$('#selectedprod > *').remove();
 						update_cptrd_prod(product);
 						$('#selectedhelp > *').remove();
@@ -797,6 +829,8 @@ $(document).ready(function()
 
 		  });
 
+
+//get cookies
 function	getCookie(cname)
 {
     var name = cname + "=";
@@ -819,6 +853,7 @@ function	getCookie(cname)
 }
 
 /* Lightboxes' function. */
+//ouvrir la boite de dialog de l'interlocuteur
 function openDialog(dialogId,lastFocused)
 {
     function check_form()
@@ -887,7 +922,8 @@ function openDialog(dialogId,lastFocused)
 
     dialog.closeDialog = closeDialog;
 
-    function closeDialog(){
+    function closeDialog()
+		{
 
 	if (check_form() == true)
 	{
@@ -936,8 +972,8 @@ function openDialog(dialogId,lastFocused)
 }
 
 
-
-function base64ArrayBuffer(arrayBuffer) // convert ArrayBuffer to base64 encoded string
+// convert ArrayBuffer to base64 encoded string
+function base64ArrayBuffer(arrayBuffer)
 {
     var base64    = ''
     var encodings = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/'

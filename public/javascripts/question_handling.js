@@ -39,6 +39,7 @@ var	display = [];
 
 var is_mandatory_not_fill = 0;
 
+//controler si un question est obligatoire ou non
 function	check_mandatories(e)
 {
     let list;
@@ -50,7 +51,7 @@ function	check_mandatories(e)
     // }
     // else
 	list = mandatories;
-    console.log(list);
+    //console.log(list);
     is_mandatory_not_fill = 0;
     function	button_save()
     {
@@ -147,6 +148,7 @@ function	check_mandatories(e)
     button_save();
 }
 
+// à voir !!!!!
 function	citycheck(e)
 {
     let id = e.target.id.split('-')[1];
@@ -256,6 +258,8 @@ function        check_input_numeric(e) /* type de text pris en charge : numeric,
     }
 }
 
+
+//afficher dans la partie html le question de type list de choix == matrix
 function	question_type_porterMatrix(question, answers)
 {
     function	create_1Choice_matrix(list, answer, pos, id)
@@ -367,7 +371,8 @@ function	question_type_city(question, answers, type) //Pas de prise en compte de
     return (balise);
 }
 
-function        question_type_nChoices(question, toReturn, answers, type)
+//afficher dans la partie html le question de type list de nchoix== checkbox
+function question_type_nChoices(question, toReturn, answers, type)
 {
     let i = 0;
     let choice_answer = undefined;
@@ -411,6 +416,7 @@ function        question_type_nChoices(question, toReturn, answers, type)
     return(toReturn);
 }
 
+//afficher dans la partie html le question de type tableau de choix
 function        question_type_n1Choice(question, toReturn, answers, type)
 {
     let choice_answer = undefined;
@@ -476,6 +482,7 @@ function        question_type_n1Choice(question, toReturn, answers, type)
     return (toReturn);
 }
 
+//afficher dans la partie html le question de type tableau de text
 function        question_type_nMLongTexts(question, toReturn, answers, type)
 {
     let nMLongTexts_answer = undefined;
@@ -645,12 +652,14 @@ function        question_type_nTexts(question, toReturn, answers, type)
     return (toReturn);
 }
 
-
+//afficher dans la partie html le question de type text
 function     question_type_text(question, answers, type)
 {
     let balise;
     if (type == "quest")
 	questionnaire_data.text.push({id: question.id, rules: question.rules});
+	//on insére dans le tableau questionnaire_data.text l'id et les régles
+
     else if (type == "company")
 	company_data.text.push({id: question.id, rules: question.rules});
 
@@ -660,6 +669,7 @@ function     question_type_text(question, answers, type)
     else if (question.mandatory == true && type == "company")
 	mandatories_company.texts.push(question.id);
 
+	//on ajoute la balise au html où on fait la saisie de réponse
     balise = '<br /><input id ="' + question.id  + '" type="text" placeholder="' + question.helpText + '" class="' + question.typeOptions.textType + '" ';
     if (question.typeOptions.maxLength != undefined)
     {
@@ -667,7 +677,7 @@ function     question_type_text(question, answers, type)
     }
     if (answers != undefined)
     {
-	for (let i = 0; answers[i] != undefined; ++i)
+	for (let i = 0; answers[i] != undefined; ++i) //on parcours tous les réponses jusqu'à on trouve l'id qui correspond au id-question
 	{
 	    if (answers[i].question.resource.split('/')[1] == question.id) //ici on prend la réponse qui correspond par l'id de la question
 	    {
@@ -678,13 +688,13 @@ function     question_type_text(question, answers, type)
 	}
     }
     balise += '>'
-    if (question.typeOptions.textType == "percent")
+    if (question.typeOptions.textType == "percent") //si la réponse en pourcentage ex 17%
 	balise += ' %';
-    return (balise);
+    return (balise); //balise contient le code html pour afficher la question
 }
 
-
-function        question_type_1Choice(question, toReturn, answers, type)
+//afficher dans la partie html le question de type list de 1 choix == radio
+function  question_type_1Choice(question, toReturn, answers, type)
 {
     let i = 0;
     let choice_answer = undefined;
@@ -753,6 +763,7 @@ function	question_type_textarea(question, answers, type)
     return (balise);
 }
 
+// append_question retourne un tables qui contient code html de l'affichage des questions et les réponses
 function	append_question(question, answers, type)
 {
     let toReturn = [];
@@ -762,9 +773,11 @@ function	append_question(question, answers, type)
 	toReturn.push('<div id="display-' + question.id + '" hidden="">');
     }
     toReturn.push('<br /><label>'+ question.text + '</label>');
-    if (question.type == "text")
+		//on affiche le question text
+
+	  if (question.type == "text") //si le question de type text on doit afficher ub label à saisir
     {
-	toReturn.push(question_type_text(question, answers, type));
+	toReturn.push(question_type_text(question, answers, type)); //on ajoute au tableau le code html qui affiche the input
     }
     else if (question.type == "textarea")
     {
